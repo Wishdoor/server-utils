@@ -9,6 +9,7 @@
 export * from "./types";
 export * from "./pagination";
 export * from "./utils";
+export * from "./validation";
 
 // Named exports for commonly used functions
 export {
@@ -34,3 +35,14 @@ export {
 	deepClone,
 	isEmpty,
 } from "./utils";
+
+export {
+	// Validation
+	validate,
+	validateAsync,
+	validateOrThrow,
+	validateMiddleware,
+	validateRequest,
+	ValidationError,
+	parseZodError,
+} from "./validation";

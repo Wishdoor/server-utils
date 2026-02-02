@@ -5,6 +5,7 @@ export default defineConfig({
 		index: "src/index.ts",
 		"pagination/index": "src/pagination/index.ts",
 		"utils/index": "src/utils/index.ts",
+		"validation/index": "src/validation/index.ts",
 	},
 	format: ["cjs", "esm"],
 	dts: true,

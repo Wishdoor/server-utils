@@ -1,6 +1,6 @@
 # @wishdoor/server-utils
 
-Server-side utility functions for API development including pagination and object utilities.
+Server-side utility functions for API development including pagination, validation, and object utilities.
 
 ## Installation
 
@@ -49,6 +49,72 @@ const total = await prisma.user.count({ where });
 
 return createPaginatedResponse(users, total, page, limit);
 // { data: [...], pagination: { total, currentPage, pageSize, totalPages, ... } }
+```
+
+---
+
+## Validation
+
+### `validateMiddleware`
+
+Express middleware for validating request `body`, `query`, and `params` using Zod.
+
+Schema structure:
+
+```typescript
+{
+  body?: ZodSchema,
+  query?: ZodSchema,
+  params?: ZodSchema
+}
+```
+
+```typescript
+import { z } from "zod";
+import { validateMiddleware } from "@wishdoor/server-utils";
+
+const createUserSchema = z.object({
+	body: z.object({
+		name: z.string().min(2),
+		email: z.string().email(),
+	}),
+	query: z.object({
+		redirect: z.string().optional(),
+	}),
+	params: z.object({
+		orgId: z.string(),
+	}),
+});
+
+router.post(
+	"/orgs/:orgId/users",
+	validateMiddleware(createUserSchema),
+	createUser
+);
+```
+
+On validation error, throws `ValidationError` with `statusCode: 400` and `errors: [{ field, message }]`.
+
+### `validate`
+
+Standalone validation function (not middleware).
+
+```typescript
+import { z } from "zod";
+import { validate } from "@wishdoor/server-utils";
+
+const userSchema = z.object({
+	name: z.string().min(2),
+	email: z.string().email(),
+});
+
+const result = validate(userSchema, { name: "John", email: "invalid" });
+
+if (result.success) {
+	console.log(result.data);
+} else {
+	console.log(result.errors); // [{ field: 'email', message: 'Invalid email' }]
+}
 ```
 
 ---
@@ -109,6 +175,16 @@ sanitizeObject(obj, { removeNull: true, excludeKeys: ["b"] });
 | `deepClone(obj)`       | Deep clone via JSON          |
 | `isEmpty(obj)`         | Check if object has no keys  |
 
+### Validation
+
+| Function                        | Description                                |
+| ------------------------------- | ------------------------------------------ |
+| `validateAsync(schema, data)`   | Async version of validate                  |
+| `validateOrThrow(schema, data)` | Validate and throw on error                |
+| `validateRequest`               | Alias for validateMiddleware               |
+| `ValidationError`               | Error class thrown by middleware           |
+| `parseZodError(error)`          | Convert ZodError to `{ field, message }[]` |
+
 ---
 
 ## Types
@@ -123,6 +199,10 @@ import type {
 	WhereClauseResult, // { where, orderBy, page, skip, limit }
 	SortDirection, // 'asc' | 'desc'
 
+	// Validation
+	ValidationResult, // { success: true, data: T } | { success: false, errors }
+	ValidationErrorItem, // { field: string, message: string }
+
 	// Utils
 	SanitizeObjectOptions,
 } from "@wishdoor/server-utils";
@@ -135,6 +215,7 @@ import type {
 ```typescript
 import { generateWhereClause } from "@wishdoor/server-utils/pagination";
 import { sanitizeObject } from "@wishdoor/server-utils/utils";
+import { validateMiddleware } from "@wishdoor/server-utils/validation";
 ```
 
 ## License
