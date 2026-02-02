@@ -150,6 +150,60 @@ sanitizeObject(obj, { removeNull: true, excludeKeys: ["b"] });
 - `excludeKeys` - keys to skip
 - `includeKeys` - only process these keys
 
+### `buildQueryString`
+
+Builds a query string from key-value pairs.
+
+```typescript
+import { buildQueryString } from "@wishdoor/server-utils";
+
+buildQueryString({ page: 1, limit: 10 });
+// "page=1&limit=10"
+
+buildQueryString({ tags: ["a", "b"], active: true });
+// "tags=a&tags=b&active=true"
+
+buildQueryString({ page: 1, search: undefined });
+// "page=1" - undefined/null values are skipped
+```
+
+### `generateUrl`
+
+Generates a complete API URL from base URL, path, and query params.
+
+```typescript
+import { generateUrl } from "@wishdoor/server-utils";
+
+// Uses process.env.API_URL as base
+generateUrl("/users");
+// "https://api.example.com/users"
+
+generateUrl("/users", { page: 1, limit: 10 });
+// "https://api.example.com/users?page=1&limit=10"
+
+// With custom base URL
+generateUrl("/users/123", undefined, "https://custom-api.com");
+// "https://custom-api.com/users/123"
+```
+
+### `buildUrl`
+
+Builds a URL with path parameters replaced.
+
+```typescript
+import { buildUrl } from "@wishdoor/server-utils";
+
+buildUrl("/users/:id", { id: "123" });
+// "https://api.example.com/users/123"
+
+buildUrl(
+	"/orgs/:orgId/users/:userId",
+	{ orgId: "abc", userId: "123" },
+	{ active: true }
+);
+// "https://api.example.com/orgs/abc/users/123?active=true"
+```
+
 ---
 
 ## Additional Functions
@@ -193,18 +247,19 @@ sanitizeObject(obj, { removeNull: true, excludeKeys: ["b"] });
 import type {
 	// Pagination
 	PaginationQuery, // { page?, limit?, search?, sortBy?, sortOrder? }
-	PaginationMeta, // { total, currentPage, pageSize, totalPages, hasNextPage, hasPreviousPage }
+	PaginationMeta, // { total, currentPage, pageSize, totalPages, ... }
 	PaginatedResponse, // { data: T[], pagination: PaginationMeta }
 	DefaultSort, // { key: string, value: 'asc' | 'desc' }
 	WhereClauseResult, // { where, orderBy, page, skip, limit }
 	SortDirection, // 'asc' | 'desc'
 
 	// Validation
-	ValidationResult, // { success: true, data: T } | { success: false, errors }
-	ValidationErrorItem, // { field: string, message: string }
+	ValidationResult, // { success, data } | { success, errors }
+	ValidationErrorItem, // { field, message }
 
 	// Utils
 	SanitizeObjectOptions,
+	QueryParamsObject, // Record<string, string | number | boolean | ...>
 } from "@wishdoor/server-utils";
 ```
 
