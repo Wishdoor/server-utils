@@ -1,0 +1,70 @@
+{
+	"name": "@wishdoor/server-utils",
+	"version": "1.0.1",
+	"description": "Server-side utility functions for API development including pagination and object utilities",
+	"main": "dist/index.js",
+	"module": "dist/index.mjs",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.mjs",
+			"require": "./dist/index.js"
+		},
+		"./pagination": {
+			"types": "./dist/pagination/index.d.ts",
+			"import": "./dist/pagination/index.mjs",
+			"require": "./dist/pagination/index.js"
+		},
+		"./utils": {
+			"types": "./dist/utils/index.d.ts",
+			"import": "./dist/utils/index.mjs",
+			"require": "./dist/utils/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md"
+	],
+	"scripts": {
+		"build": "tsup",
+		"dev": "tsup --watch",
+		"typecheck": "tsc --noEmit",
+		"lint": "eslint src --ext .ts",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"prepublishOnly": "npm run build"
+	},
+	"keywords": [
+		"server",
+		"utils",
+		"pagination",
+		"prisma",
+		"api",
+		"typescript",
+		"wishdoor"
+	],
+	"author": "Wishdoor",
+	"license": "MIT",
+	"devDependencies": {
+		"@types/node": "^20.11.0",
+		"tsup": "^8.0.1",
+		"typescript": "^5.3.3",
+		"vitest": "^1.2.0"
+	},
+	"peerDependencies": {
+		"typescript": ">=5.0.0"
+	},
+	"peerDependenciesMeta": {
+		"typescript": {
+			"optional": true
+		}
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/wishdoor/wishdoor"
+	}
+}
