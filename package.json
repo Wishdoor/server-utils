@@ -1,6 +1,6 @@
 {
 	"name": "@wishdoor/server-utils",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Server-side utility functions for API development including pagination and object utilities",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
