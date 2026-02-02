@@ -1,6 +1,6 @@
 {
 	"name": "@wishdoor/server-utils",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Server-side utility functions for API development including pagination and object utilities",
 	"main": "dist/index.js",
 	"module": "dist/index.mjs",
@@ -66,5 +66,9 @@
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Wishdoor/server-utils"
+	},
+	"homepage": "https://github.com/Wishdoor/server-utils#readme",
+	"bugs": {
+		"url": "https://github.com/Wishdoor/server-utils/issues"
 	}
 }
