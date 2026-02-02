@@ -1,5 +1,5 @@
-import type { Request, Response, NextFunction } from "express";
-import type { ZodObject, ZodRawShape } from "zod";
+import type { NextFunction, Request, Response } from "express";
+import type { AnyZodObject } from "zod";
 import { ValidationError, parseZodError } from "./types";
 
 /**
@@ -28,9 +28,7 @@ import { ValidationError, parseZodError } from "./types";
  * router.post('/users', validateMiddleware(createUserSchema), createUser);
  * ```
  */
-export function validateMiddleware<T extends ZodRawShape>(
-	schema: ZodObject<T>
-) {
+export function validateMiddleware(schema: AnyZodObject) {
 	return async (req: Request, _res: Response, next: NextFunction) => {
 		try {
 			const dataToValidate: Record<string, unknown> = {};
@@ -72,12 +70,11 @@ export function validateMiddleware<T extends ZodRawShape>(
 				Array.isArray((error as { errors: unknown[] }).errors)
 			) {
 				// ZodError
-				const errors = parseZodError(error as { errors: { path: (string | number)[]; message: string }[] });
+				const errors = parseZodError(
+					error as { errors: { path: (string | number)[]; message: string }[] }
+				);
 				next(
-					new ValidationError(
-						errors[0]?.message ?? "Validation failed",
-						errors
-					)
+					new ValidationError(errors[0]?.message ?? "Validation failed", errors)
 				);
 			} else {
 				next(error);

@@ -1,4 +1,4 @@
-import type { ZodType } from "zod";
+import type { AnyZodObject, ZodType } from "zod";
 import type { ValidationResult } from "./types";
 import { parseZodError } from "./types";
 
@@ -52,13 +52,13 @@ export function validate<T>(
  * @returns Promise with validation result
  */
 export async function validateAsync<T>(
-	schema: ZodType<T>,
+	schema: AnyZodObject,
 	data: unknown
 ): Promise<ValidationResult<T>> {
 	const result = await schema.safeParseAsync(data);
 
 	if (result.success) {
-		return { success: true, data: result.data };
+		return { success: true, data: result.data as T };
 	}
 
 	return {
@@ -75,15 +75,17 @@ export async function validateAsync<T>(
  * @returns Parsed data if valid
  * @throws Error with validation errors if invalid
  */
-export function validateOrThrow<T>(schema: ZodType<T>, data: unknown): T {
+export function validateOrThrow<T>(schema: AnyZodObject, data: unknown): T {
 	const result = schema.safeParse(data);
 
 	if (result.success) {
-		return result.data;
+		return result.data as T;
 	}
 
 	const errors = parseZodError(result.error);
-	const error = new Error(errors[0]?.message ?? "Validation failed") as Error & {
+	const error = new Error(
+		errors[0]?.message ?? "Validation failed"
+	) as Error & {
 		errors: typeof errors;
 		statusCode: number;
 	};
